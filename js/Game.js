@@ -2,13 +2,15 @@ Game = function(canvasId) {
     var canvas = document.getElementById(canvasId);
     var engine = new BABYLON.Engine(canvas, true);
     var _this = this;
-
+    _this.actualTime = Date.now();
     this.scene = this._initScene(engine);
 
     var _arena = Arena(_this);
     var _player = new Player(_this, canvas);
 
     engine.runRenderLoop(function () {
+        _this.fps = Math.round(1000/engine.getDeltaTime());
+        _player._checkMove((_this.fps)/60);
         _this.scene.render();
     });
 
