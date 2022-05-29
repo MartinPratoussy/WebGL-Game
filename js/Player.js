@@ -5,6 +5,7 @@ Player = function(game, canvas) {
     this.axisMovement = [false, false, false, false];
     this.angularSensibility = 3600;
     this.speed = 1;
+    this.weaponShoot = false;
 
     window.addEventListener("keyup", function(evt) {
         switch(evt.key) {
@@ -60,6 +61,7 @@ Player.prototype = {
         var _this = this;
 
         var canvas = this.game.scene.getEngine().getRenderingCanvas();
+
         canvas.addEventListener("click", function(evt) {
             canvas.requestPointerLock = 
             canvas.requestPointerLock || 
@@ -87,6 +89,20 @@ Player.prototype = {
         document.addEventListener("mspointerlockchange", pointerLockChange, false);
         document.addEventListener("mozpointerlockchange", pointerLockChange, false);
         document.addEventListener("webkitpointerlockchange", pointerLockChange, false);
+
+        canvas.addEventListener("mousedown", function(evt) {
+            if (_this.controlEnabled && !_this.weaponShoot) {
+                _this.weaponShoot = true;
+                _this.handleUserMouseDown();
+            }
+        });
+
+        canvas.addEventListener("mouseup", function(evt) {
+            if (_this.controlEnabled && _this.weaponShoot) {
+                _this.weaponShoot = false;
+                _this.handleUserMouseUp();
+            }
+        });
     },
 
     _initCamera : function(scene, canvas) {
@@ -94,6 +110,7 @@ Player.prototype = {
         this.camera.axisMovement = [false, false, false, false];
         this.isAlive = true;
         this.camera.setTarget(BABYLON.Vector3.Zero());
+        this.camera.weapons = new Weapons(this);
     },
 
     _checkMove : function(ratioFps) {
@@ -128,6 +145,18 @@ Player.prototype = {
                 this.camera.position.y,
                 this.camera.position.z + Math.cos(this.camera.rotation.y + degToRad(-90)) * -relativeSpeed
             );
+        }
+    },
+
+    handleUserMouseDown : function() {
+        if (this.isAlive === true) {
+            this.camera.weapons.fire();
+        }
+    },
+
+    handleUserMouseUp : function() {
+        if (this.isAlive === true) {
+            this.camera.weapons.stopFire();
         }
     }
 }

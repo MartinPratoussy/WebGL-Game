@@ -1,6 +1,7 @@
 Game = function(canvasId) {
     var canvas = document.getElementById(canvasId);
     var engine = new BABYLON.Engine(canvas, true);
+    this.engine = engine;
     var _this = this;
     _this.actualTime = Date.now();
     this.scene = this._initScene(engine);
@@ -12,6 +13,9 @@ Game = function(canvasId) {
         _this.fps = Math.round(1000/engine.getDeltaTime());
         _player._checkMove((_this.fps)/60);
         _this.scene.render();
+        if (_player.camera.weapons.launchBullets === true) {
+            _player.camera.weapons.laucnhFire();
+        }
     });
 
     window.addEventListener("resize", function () {

@@ -9,14 +9,14 @@ Arena = function(game) {
     light2.intensity = 0.8;
 
     // Material pour le sol
-    var materialGround = new BABYLON.StandardMaterial("wallTexture", scene);
+    var materialGround = new BABYLON.StandardMaterial("groundTexture", scene);
     materialGround.diffuseTexture = new BABYLON.Texture("assets/images/tile.jpg", scene);
     materialGround.diffuseTexture.uScale = 8.0;
     materialGround.diffuseTexture.vScale = 8.0;
 
     // Material pour les objets
-    var materialWall = new BABYLON.StandardMaterial("groundTexture", scene);
-    materialWall.diffuseTexture = new BABYLON.Texture("assets/images/tile.jpg", scene);
+    var materialWall = new BABYLON.StandardMaterial("wallTexture", scene);
+    materialWall.diffuseTexture = new BABYLON.Texture("assets/images/brick.jpg", scene);
 
     var boxArena = BABYLON.Mesh.CreateBox("box1", 100, scene, false, BABYLON.Mesh.BACKSIDE);
     boxArena.material = materialGround;
