@@ -106,8 +106,12 @@ Player.prototype = {
     },
 
     _initCamera : function(scene, canvas) {
+        let randomPoint = Math.random();
+        randomPoint = Math.round(randomPoint * (this.game.allSpawnPoints.length - 1));
+        this.spawnPoint = this.game.allSpawnPoints[randomPoint];
+
         var playerBox = BABYLON.Mesh.CreateBox("headMainPlayer", 3, scene);
-        playerBox.position = new BABYLON.Vector3(-20, 5, 0);
+        playerBox.position = this.spawnPoint.clone();
         playerBox.ellipsoid = new BABYLON.Vector3(2, 2, 2);
 
         this.camera = new BABYLON.FreeCamera("camera", new BABYLON.Vector3(0, 0, 0), scene);
@@ -127,6 +131,11 @@ Player.prototype = {
         hitBoxPlayer.scaling.y = 2;
         hitBoxPlayer.isPickable = true;
         hitBoxPlayer.isMain = true;
+
+        this.camera.health = 100;
+        this.camera.armor = 0;
+
+        this.game.scene.activeCamera = this.camera;
     },
 
     _checkMove : function(ratioFps) {
@@ -180,5 +189,43 @@ Player.prototype = {
         if (this.isAlive === true) {
             this.camera.weapons.stopFire();
         }
-    }
+    },
+
+    getDamage : function(damage) {
+        var damageTaken = damage;
+        if (this.camera.armor > Math.round(damageTaken/2)) {
+            this.camera.armor -= Math.round(damageTaken/2);
+            damageTaken = Math.round(damageTake/2);
+        } else {
+            damageTaken = damageTaken - this.camera.armor;
+            this.camera.armor = 0;
+        }
+
+        if (this.camera.health > damageTaken) {
+            this.camera.health -= damageTaken;
+        } else {
+            this.playerDead();
+        }
+    },
+
+    playerDead : function() {
+        this.deadCamera = new BABYLON.ArcRotateCamera("ArcRotateCamera", 1, 0.8, 10, new BABYLON.Vector3(
+            this.camera.playerBox.position.x,
+            this.camera.playerBox.position.y,
+            this.camera.playerBox.position.z
+        ), this.game.scene);
+        this.game.scene.activeCamera = this.deadCamera;
+        this.deadCamera.attachControl(this.game.scene.getEngine().getRenderingCanvas());
+
+        this.camera.playerBox.dispose();
+        this.camera.dispose();
+        this.camera.weapons.rocketLauncher.dispose();
+        this.isAlive = false;
+
+        var newPlayer = this;
+        var canvas = this.game.scene.getEngine().getRenderingCanvas();
+        setTimeout(function() {
+            newPlayer._initCamera(newPlayer.game.scene, canvas);
+        }, 4000);
+    },
 }

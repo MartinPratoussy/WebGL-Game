@@ -49,7 +49,7 @@ Weapons.prototype = {
         this.launchBullets = false;
     },
 
-    laucnhFire : function() {
+    launchFire : function() {
         if (this.canFire) {
             var renderWidth = this.Player.game.engine.getRenderWidth(true);
             var renderHeight = this.Player.game.engine.getRenderHeight(true);
@@ -69,7 +69,6 @@ Weapons.prototype = {
     createRocket : function(playerPosition) {
         var positionValue = this.rocketLauncher.absolutePosition.clone();
         var rotationValue = playerPosition.rotation;
-        var Player = this.Player;
         var newRocket = BABYLON.Mesh.CreateBox("rocket", 1, this.Player.game.scene);
         
         newRocket.direction = new BABYLON.Vector3(
@@ -91,32 +90,6 @@ Weapons.prototype = {
         newRocket.material = new BABYLON.StandardMaterial("textureWeapon", this.Player.game.scene);
         newRocket.material.diffuseColor = new BABYLON.Color3(1, 0, 0);
 
-        var Player = this.Player;
-
-        newRocket.registerAfterRender(function() {
-            newRocket.translate(new BABYLON.Vector3(0, 0, 1), 1, 0);
-            var rayRocket = new BABYLON.Ray(newRocket.position, newRocket.direction);
-            var meshFound = newRocket.getScene().pickWithRay(rayRocket);
-
-            if (!meshFound || meshFound.distance < 10) {
-                if (meshFound.pickedMesh) {
-                    var explosionRadius = BABYLON.Mesh.CreateSphere("sphere", 5.0, 20, Player.game.scene);
-                    explosionRadius.position = meshFound.pickedPoint;
-                    explosionRadius.isPickable = false;
-                    explosionRadius.material = new BABYLON.StandardMaterial("textureExplosion", Player.game.scene);
-                    explosionRadius.material.diffuseColor = new BABYLON.Color3(1, 0.6, 0);
-                    explosionRadius.material.specularColor = new BABYLON.Color3(0, 0, 0);
-                    explosionRadius.material.alpha = 0.8;
-
-                    explosionRadius.registerAfterRender(function() {
-                        explosionRadius.material.alpha -= 0.02;
-                        if (explosionRadius.material.alpha <= 0) {
-                            explosionRadius.dispose();
-                        }
-                    });
-                }
-                newRocket.dispose();
-            }
-        });
+        this.Player.game._rockets.push(newRocket);
     },
 }
