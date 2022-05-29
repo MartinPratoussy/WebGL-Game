@@ -24,6 +24,7 @@ Arena = function(game) {
     boxArena.scaling.y = 0.3;
     boxArena.scaling.z = 0.8;
     boxArena.scaling.x = 3.5;
+    boxArena.checkCollisions = true;
 
     var columns = [];
     var numberColumn = 6;
@@ -35,6 +36,7 @@ Arena = function(game) {
             let mainCylinder = BABYLON.Mesh.CreateCylinder("cyl0-"+i, 30, 5, 5, 20, 4, scene);
             mainCylinder.position = new BABYLON.Vector3(-sizeArena/2,30/2,-20 + (40 * i));
             mainCylinder.material = materialWall;
+            mainCylinder.checkCollisions = true;
             columns[i].push(mainCylinder);
 
             if(numberColumn>1){

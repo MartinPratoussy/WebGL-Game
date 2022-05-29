@@ -58,7 +58,7 @@ Weapons.prototype = {
             direction = direction.pickedPoint.subtractInPlace(this.Player.camera.position);
             direction = direction.normalize();
 
-            this.createRocket(this.Player.camera, direction);
+            this.createRocket(this.Player.camera.playerBox, direction);
 
             this.canFire = false;
         } else {
@@ -66,9 +66,10 @@ Weapons.prototype = {
         }
     },
 
-    createRocket : function(playerPosition, direction) {
+    createRocket : function(playerPosition) {
         var positionValue = this.rocketLauncher.absolutePosition.clone();
         var rotationValue = playerPosition.rotation;
+        var Player = this.Player;
         var newRocket = BABYLON.Mesh.CreateBox("rocket", 1, this.Player.game.scene);
         
         newRocket.direction = new BABYLON.Vector3(
