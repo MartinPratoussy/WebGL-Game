@@ -103,6 +103,18 @@ Player.prototype = {
                 _this.handleUserMouseUp();
             }
         });
+
+        this.previousWheeling = 0;
+        canvas.addEventListener("wheel", function(evt) {
+            if (Math.round(evt.timeStamp - _this.previousWheeling) > 10) {
+                if (evt.deltaY < 0) {
+                    _this.camera.weapons.nextWeapon(1);
+                } else {
+                    _this.camera.weapons.nextWeapon(-1);
+                }
+                _this.previousWheeling = evt.timeStamp;
+            }
+        }, false);
     },
 
     _initCamera : function(scene, canvas) {
@@ -219,7 +231,13 @@ Player.prototype = {
 
         this.camera.playerBox.dispose();
         this.camera.dispose();
-        this.camera.weapons.rocketLauncher.dispose();
+
+        var inventoryWeapons = this.camera.weapons.inventory;
+        for (var i = 0; i < inventoryWeapons.length; i++) {
+            inventoryWeapons[i].dispose();
+        }
+        inventoryWeapons = [];
+
         this.isAlive = false;
 
         var newPlayer = this;
